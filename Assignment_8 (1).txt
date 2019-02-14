@@ -1,0 +1,239 @@
+
+/*
+ * This program takes two characters, to integers, and a string and compares
+ * them to each other in order to find compatibility between the two profiles.
+ */
+import javax.swing.*;
+
+//main class
+public class Foothill {
+   public static void main(String[] args) {
+
+      // DateProfile instantiation
+      DateProfile applicant1 = 
+            new DateProfile('M', 'F', 4, 6, "Spongebob Squarepants");
+      DateProfile applicant2 = new DateProfile('F', 'M', 6, 5, "Sandy Cheeks");
+      DateProfile applicant3 = new DateProfile('F', 'M', 3, 4, "Karen Plankton");
+      DateProfile applicant4 = new DateProfile('M', 'F', 7, 8, "Patrick Star");
+
+      // calls displayTwoProfiles and shows all possible combinations
+      displayTwoProfiles(applicant1, applicant1);
+      displayTwoProfiles(applicant1, applicant2);
+      displayTwoProfiles(applicant1, applicant3);
+      displayTwoProfiles(applicant1, applicant4);
+      System.out.println("\n");
+
+      displayTwoProfiles(applicant2, applicant1);
+      displayTwoProfiles(applicant2, applicant2);
+      displayTwoProfiles(applicant2, applicant3);
+      displayTwoProfiles(applicant2, applicant4);
+      System.out.println("\n");
+
+      displayTwoProfiles(applicant3, applicant1);
+      displayTwoProfiles(applicant3, applicant2);
+      displayTwoProfiles(applicant3, applicant3);
+      displayTwoProfiles(applicant3, applicant4);
+      System.out.println("\n");
+
+      displayTwoProfiles(applicant4, applicant1);
+      displayTwoProfiles(applicant4, applicant2);
+      displayTwoProfiles(applicant4, applicant3);
+      displayTwoProfiles(applicant4, applicant4);
+      System.out.println("\n");
+
+   }
+
+   // method that displays two objects together.
+   static void displayTwoProfiles(DateProfile profile1, DateProfile profile2) {
+
+      System.out.println("Fit between " + profile1.getName() + " and " + "" + 
+      profile2.getName() + ": "
+            + String.format("%.2f", profile1.fitValue(profile2)));
+
+   }
+}
+
+// class date profile that will create the four instance methods and check for
+// errors
+class DateProfile {
+   // finals
+   public static final char DEFAULT_GENDER = 'D';
+   public static final int DEFAULT_NUMBER = 0;
+   public static final String DEFAULT_STRING = "(undefined)";
+   public static final int MAX_INT = 10;
+   public static final int MIN_INT = 1;
+   public static final int MAX_LEN = 50;
+   public static final int MIN_LEN = 1;
+
+   private char gender;
+   private char searchGender;
+   private int romance;
+   private int finance;
+   private String name;
+
+   // default constructor
+   DateProfile() {
+      setDefaults();
+   }
+
+   // CONSTRUCTOR
+   DateProfile(char gender, char searchGender, int romance, int finance, 
+         String name) {
+      if (!setGender(gender, searchGender))
+         gender = DEFAULT_GENDER;
+      searchGender = DEFAULT_GENDER;
+      if (!setRomance(romance, finance))
+         romance = DEFAULT_NUMBER;
+      finance = DEFAULT_NUMBER;
+      if (!setName(name))
+         name = DEFAULT_STRING;
+   }
+
+   // mutators
+   public boolean setGender(char gen, char seaGen) {
+      if (!validChar(gen, seaGen))
+         return false;
+      gender = gen;
+      searchGender = seaGen;
+      return true;
+   }
+
+   public boolean setRomance(int rom, int fin) {
+      if (!validInt(rom, fin))
+         return false;
+      romance = rom;
+      finance = fin;
+      return true;
+   }
+
+   public boolean setName(String nam) {
+      if (!validString(nam))
+         return false;
+      name = nam;
+      return true;
+   }
+
+   // accesors
+   public char getGender() {
+      return gender;
+   }
+
+   public char getSearchGender() {
+      return searchGender;
+   }
+
+   public int getRomance() {
+      return romance;
+   }
+
+   public int getFinance() {
+      return finance;
+   }
+
+   public String getName() {
+      return name;
+   }
+
+   public boolean validChar(char gen, char seaGen) {
+      if (gen == ' ' && seaGen == ' ')
+         return false;
+      return true;
+   }
+
+   public boolean validInt(int rom, int fin) {
+      if (rom > MAX_INT || rom < MIN_INT && fin > MAX_INT || fin < MIN_INT)
+         return false;
+      return true;
+   }
+
+   public boolean validString(String nam) {
+      if (nam == null)
+         return false;
+      if (nam.length() > MAX_LEN || nam.length() < MIN_LEN)
+         return false;
+      return true;
+
+   }
+
+   // group everything together
+   public String toString() {
+      String retVal;
+      retVal = gender + ", " + searchGender + ", " + romance + ", " + finance 
+            + ", " + name;
+      return retVal;
+   }
+
+   // takes all five parameters and acts like a mutator
+   public void setAll(char gender, char searchGender, int romance, int finance,
+         String name) {
+
+   }
+
+   // sets all five members to their default values
+   public void setDefaults() {
+      gender = DEFAULT_GENDER;
+      searchGender = DEFAULT_GENDER;
+      romance = DEFAULT_NUMBER;
+      finance = DEFAULT_NUMBER;
+      name = DEFAULT_STRING;
+
+   }
+
+   // sends genderMatch to fit value. Gender has to be desired gender
+   private double determineGenderFit(DateProfile partner) {
+
+      double genderMatch = 0.0;
+
+      if (gender == partner.searchGender) {
+         genderMatch = 1.0;
+      }
+
+      return genderMatch;
+
+   }
+
+   // computes average of romance importance and sends it to fitValue
+   private double determineRomanceFit(DateProfile partner) {
+      // return (10-(romance - partner.romance))/10;
+      return (10 - (Math.abs((romance - partner.romance)))) / 10.;
+
+   }
+
+   // computes average of finance importance and sends it to fitValue
+   private double determineFinanceFit(DateProfile partner) {
+
+      return (10 - (Math.abs((finance - partner.finance)))) / 10.;
+   }
+
+   // computes total fitValue
+   public double fitValue(DateProfile partner) {
+      return determineGenderFit(partner) * ((determineRomanceFit(partner) +
+            determineFinanceFit(partner)) / 2);
+
+   }
+
+}
+/*-------------------------OUTPUT--------------------------------
+Fit between Spongebob Squarepants and Spongebob Squarepants: 0.00
+Fit between Spongebob Squarepants and Sandy Cheeks: 0.85
+Fit between Spongebob Squarepants and Karen Plankton: 0.85
+Fit between Spongebob Squarepants and Patrick Star: 0.00
+
+
+Fit between Sandy Cheeks and Spongebob Squarepants: 0.85
+Fit between Sandy Cheeks and Sandy Cheeks: 0.00
+Fit between Sandy Cheeks and Karen Plankton: 0.00
+Fit between Sandy Cheeks and Patrick Star: 0.80
+
+
+Fit between Karen Plankton and Spongebob Squarepants: 0.85
+Fit between Karen Plankton and Sandy Cheeks: 0.00
+Fit between Karen Plankton and Karen Plankton: 0.00
+Fit between Karen Plankton and Patrick Star: 0.60
+
+
+Fit between Patrick Star and Spongebob Squarepants: 0.00
+Fit between Patrick Star and Sandy Cheeks: 0.80
+Fit between Patrick Star and Karen Plankton: 0.60
+Fit between Patrick Star and Patrick Star: 0.00
+*/

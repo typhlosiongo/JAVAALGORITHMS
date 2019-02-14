@@ -1,0 +1,298 @@
+import javax.swing.*;
+
+public class Foothill
+{
+   public static void main (String[] args)
+   {
+      Student[] even = { 
+              new Student("Lennon", "John", 95), 
+              new Student("McCartney", "Paul", 123),
+              new Student("Starkey", "Richard", 195), 
+              new Student("Harrison", "George", 148),
+              new Student("Van Halen", "Edward", 108), 
+              new Student("Hetfield", "James", 225),
+              new Student("Cobain", "Kurt", 44), 
+              new Student("Page", "Jimmy", 452),
+              new Student("Bowie", "David", 295), 
+              new Student("Mercury", "Freddy", 321),
+              new Student("Berry", "Chuck", 342),
+              new Student("Rose", "Axel", 215),
+              new Student("Jack", "Freddy", 212),
+              new Student("Dogg", "Snoop", 420),
+              new Student("Presley", "Elvis", 241),
+              new Student("Wonder", "Stevie", 332)
+              };
+      
+      Student[] odd = {
+            new Student("Washington", "George", 330),
+            new Student("Adams", "John", 219),
+            new Student("Jefferson", "Thomas", 413),
+            new Student("Madison", "James ", 467),
+            new Student("Lincoln", "Abraham", 255),
+            new Student("Johnson", "Lyndon", 86),
+            new Student("Reagan", "Ronald", 393),
+            new Student("Roosevelt", "Franklin", 284),
+            new Student("Hoover", "Herbert", 350),
+            new Student("Wilson", "Woodrow", 409),
+            new Student("Kennedy", "John", 140),
+            new Student("Nixon", "Richard", 334),
+            new Student("Clinton", "Bill", 145),
+            new Student("Bush", "George", 319),
+            new Student("Obama", "Barack", 382),
+      };
+      Student[] one = {
+            new Student("Jobs", "Steve", 324)
+      };
+      Student[] none = {
+      };
+
+      System.out.println("Before: \n");
+      StudentArrayUtilities.toString(even);
+      
+      System.out.println("Sorting by default_____________\n After: \n");
+      
+      StudentArrayUtilities.arraySort(even);
+      StudentArrayUtilities.toString(even);
+      
+      StudentArrayUtilities.arraySort(odd);
+      StudentArrayUtilities.toString(odd);
+      
+      StudentArrayUtilities.arraySort(one);
+      StudentArrayUtilities.toString(one);
+      
+      StudentArrayUtilities.arraySort(none);
+      StudentArrayUtilities.toString(none);
+ 
+   }
+}
+
+class Student
+{
+   private String lastName;
+   private String firstName;
+   private int totalPoints;
+
+   public static final String DEFAULT_NAME = "zz-error";
+   public static final int DEFAULT_POINTS = 0;
+   public static final int MAX_POINTS = 1000;
+   public static final int SORT_BY_FIRST = 88;
+   public static final int SORT_BY_LAST = 98;
+   public static final int SORT_BY_POINTS = 108;
+
+   // constructor requires parameters - no default supplied
+   public Student( String last, String first, int points)
+   {
+      if ( !setLastName(last) )
+         lastName = DEFAULT_NAME;
+      if ( !setFirstName(first) )
+         firstName = DEFAULT_NAME;
+      if ( !setPoints(points) )
+         totalPoints = DEFAULT_POINTS;    
+   }
+
+   String getLastName() { return lastName; }
+   String getFirstName() { return firstName; } 
+   int getTotalPoints() { return totalPoints; }
+
+   boolean setLastName(String last)
+   {
+      if ( !validString(last) )
+         return false;
+      lastName = last;
+      return true;
+   }
+
+   boolean setFirstName(String first)
+   {
+      if ( !validString(first) )
+         return false;
+      firstName = first;
+      return true;
+   }
+
+   boolean setPoints(int pts)
+   {
+      if ( !validPoints(pts) )
+         return false;
+      totalPoints = pts;
+      return true;
+   }
+
+   // could be an instance method and, if so, would take one parameter
+   static int compareTwoStudents( Student firstStud, Student secondStud )
+   {
+      int result;
+
+      // this particular version based on last name only (case insensitive)
+      result = firstStud.lastName.compareToIgnoreCase(secondStud.lastName);
+
+      return result;
+   }
+
+   public String toString()
+   {
+      String resultString;
+
+      resultString = " "+ lastName 
+         + ", " + firstName
+         + " points: " + totalPoints
+         + "\n";
+      return resultString;
+   }
+
+   private static boolean validString( String testStr )
+   {
+      if (testStr != null && Character.isLetter(testStr.charAt(0)))
+         return true;
+      return false;
+   }
+
+   private static boolean validPoints( int testPoints )
+   {
+      if (testPoints >= 0 && testPoints <= MAX_POINTS)
+         return true;
+      return false;
+   }
+   
+   private static int sortKey(){
+      
+   return 0;
+      
+   }
+   
+   public static boolean setSortKey(int key){
+   
+      return false;
+      
+   }
+   
+   public static int getSortKey(){
+      return 0;
+   }
+   
+}
+
+
+class StudentArrayUtilities
+{
+   // print the array with string as a title for the message box
+   // this is somewhat controversial - we may or may not want an I/O
+   // methods in this class.  we'll accept it today
+   public static void toString(Student[] data)
+   {
+      String output = "";
+
+      // build the output string from the individual Students:
+      for (int k = 0; k < data.length; k++)
+         output += " "+ data[k].toString();
+
+      System.out.println(output);
+   }
+
+   // returns true if a modification was made to the array
+   private static boolean floatLargestToTop(Student[] data, int top)
+   {
+      boolean changed = false;
+      Student temp;
+
+      // compare with client call to see where the loop stops
+      for (int k = 0; k < top; k++)
+         if ( Student.compareTwoStudents(data[k], data[k + 1]) > 0 )
+         {
+            temp = data[k];
+            data[k] = data[k + 1];
+            data[k + 1] = temp;
+            changed = true;
+         }
+      return changed;
+   }
+
+   // public callable arraySort() - assumes Student class has a compareTo()
+   public static void arraySort(Student[] array)
+   {
+      for (int k = 0; k < array.length; k++)
+         // compare with method def to see where inner loop stops
+         if ( !floatLargestToTop(array, array.length - 1 - k) )
+            return;
+   }
+   
+   public static int arraySearch(Student[] array, 
+      String keyFirst, String keyLast)
+   {
+      for (int k = 0; k < array.length; k++)
+         if ( array[k].getLastName().equals(keyLast) )
+            return k;  // found match, return index
+
+      return -1;   // fell through - no match
+   }
+   
+   public static double getMedianDestructive(Student[] array){
+   if (array.length == 0){
+      return 0.0;
+   }
+// if(array.length == 1)
+   // return array[0];
+   return 0;
+      
+   }
+   
+}
+/*-------OUTPUT--------
+ * Before: 
+
+  Lennon, John points: 95
+  McCartney, Paul points: 123
+  Starkey, Richard points: 195
+  Harrison, George points: 148
+  Van Halen, Edward points: 108
+  Hetfield, James points: 225
+  Cobain, Kurt points: 44
+  Page, Jimmy points: 452
+  Bowie, David points: 295
+  Mercury, Freddy points: 321
+  Berry, Chuck points: 342
+  Rose, Axel points: 215
+  Jack, Freddy points: 212
+  Dogg, Snoop points: 420
+  Presley, Elvis points: 241
+  Wonder, Stevie points: 332
+
+Sorting by default_____________
+ After: 
+
+  Berry, Chuck points: 342
+  Bowie, David points: 295
+  Cobain, Kurt points: 44
+  Dogg, Snoop points: 420
+  Harrison, George points: 148
+  Hetfield, James points: 225
+  Jack, Freddy points: 212
+  Lennon, John points: 95
+  McCartney, Paul points: 123
+  Mercury, Freddy points: 321
+  Page, Jimmy points: 452
+  Presley, Elvis points: 241
+  Rose, Axel points: 215
+  Starkey, Richard points: 195
+  Van Halen, Edward points: 108
+  Wonder, Stevie points: 332
+
+  Adams, John points: 219
+  Bush, George points: 319
+  Clinton, Bill points: 145
+  Hoover, Herbert points: 350
+  Jefferson, Thomas points: 413
+  Johnson, Lyndon points: 86
+  Kennedy, John points: 140
+  Lincoln, Abraham points: 255
+  Madison, James  points: 467
+  Nixon, Richard points: 334
+  Obama, Barack points: 382
+  Reagan, Ronald points: 393
+  Roosevelt, Franklin points: 284
+  Washington, George points: 330
+  Wilson, Woodrow points: 409
+
+  Jobs, Steve points: 324
+
+*/

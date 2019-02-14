@@ -1,0 +1,390 @@
+import cs_1c.*;
+import java.util.*;
+// ----------- wrapper classes -------------
+//Each one contains a single EBookEntry object and overrides the toString(), compareTo(), equals()
+//and hashCode() methods.  It also must declare that it implements the Comparable< ... > interface 
+//for the appropriate basic type, Integer or String.
+class EBookCompInt
+   implements Comparable<Integer>
+{
+   EBookEntry data;
+   public EBookCompInt(EBookEntry eBook)
+   {
+      data = eBook;
+   }
+   // we'll use compareTo() to implement our find on key
+   public int compareTo(Integer key)
+   {
+      return data.getETextNum() - key;
+   }
+   // let equals() preserve the equals() provided by embedded data
+   public boolean equals(EBookCompInt rhs)
+   {
+      return data.equals(rhs.data);
+   }
+   
+   public int hashCode()
+   {
+      return data.getETextNum();
+   }
+   
+   public String toString()
+   {
+      return data.toString();
+   }
+}
+
+class EBookCompString 
+   implements Comparable<String>
+{
+   EBookEntry data;
+   public EBookCompString(EBookEntry eBook)
+   {
+      data = eBook;
+   }
+   
+   public String toString()
+   {
+      return data.toString();
+   }
+   // we'll use compareTo() to implement our find on key
+   public int compareTo(String key)
+   {
+      return data.getCreator().compareTo(key);
+   }
+   // let equals() preserve the equals() provided by embedded data
+   public boolean equals(EBookCompString rhs)
+   {
+      return data.equals(rhs.data);
+   }
+   
+   public int hashCode()
+   {
+      return data.getCreator().hashCode();
+   }
+}
+
+//------------------------------------------------------
+
+public class Foothill
+{
+
+   public static final int NUM_RANDOM_INDICES = 25;
+   
+   // -------  main --------------
+   public static void main(String[] args) throws Exception
+   {
+      // create a QP hash table of EBooks ...
+      //FHhashQPwFind< Integer, EBookCompInt> hashTable 
+         //= new FHhashQPwFind<Integer, EBookCompInt>();
+      
+       FHhashQPwFind< String, EBookCompString> hashTable 
+          = new FHhashQPwFind<String, EBookCompString>();
+       
+      
+       EBookEntryReader input = new EBookEntryReader("catalog-short4.txt");
+       int total;
+       int[] randomIndices;
+       EBookCompString bookResult;
+       //EBookCompInt bookResult;
+       
+    // insert all books into the hash table ...
+       total = input.getNumBooks();
+       for(int i = 0; i < total; i++)
+       {
+          //hashTable.insert(new EBookCompInt(input.getBook(i)));
+          hashTable.insert(new EBookCompString(input.getBook(i)));
+       }
+       
+       // generate some random indices into an array ...
+       Random random = new Random();
+       randomIndices = new int[NUM_RANDOM_INDICES];
+       for(int i = 0; i < NUM_RANDOM_INDICES; i++)
+       {
+          randomIndices[i] = random.nextInt(total);
+       }
+      
+       
+      // display NUM_RANDOM_INDICES books from an array ...
+       for(int i = 0; i < NUM_RANDOM_INDICES; i++)
+       {
+          System.out.println(input.getBook(randomIndices[i]));
+       }
+       
+    // attempt to find on the selected key
+       System.out.println( "The same random books from the hash table " );
+       for (int i = 0; i < NUM_RANDOM_INDICES; i++)
+       {
+          try
+          {
+              bookResult = hashTable.find( 
+                  input.getBook(randomIndices[i]).getTitle());
+             //bookResult = hashTable.find( 
+             //input.getBook(randomIndices[i]).getETextNum() );
+             System.out.println("Found " + bookResult.toString());
+
+          }
+          catch (NoSuchElementException e)
+          {
+             System.out.println("Not Found");
+          }
+       }
+
+      
+      // test known successes failures exceptions:
+      try
+      {
+          bookResult = hashTable.find( "Jack Kerouac" );
+          //bookResult = hashTable.find( -3 );
+          System.out.println( "Found " + bookResult.toString() );
+      }
+      catch (Exception e)
+      {
+         System.out.println( "Not found" );
+      }
+      
+      // more failures
+      try
+      {
+         bookResult = hashTable.find(null);
+      }
+      catch (Exception e)
+      {
+         System.out.println( "Not found" );
+      }
+      
+      try
+      {
+      }
+      catch (Exception e)
+      {
+      }
+   } 
+}
+
+class FHhashQPwFind<KeyType, E extends Comparable<KeyType> >
+extends FHhashQP<E>
+{
+   // returns the found object, or throws a java.util.NoSuchElementException
+   public E find(KeyType key) throws NoSuchElementException
+   {
+      int location = findPosKey(key);
+      HashEntry<E> empty = mArray[location];
+      if(empty.state == ACTIVE)
+      {
+         return empty.data;
+      }
+      else
+         throw new NoSuchElementException();
+   }
+   
+   //a trivial modification to myHash() which uses the key rather than the object, to hash.
+   protected int myHashKey(KeyType key)
+   {
+      int hashValue;
+      hashValue = key.hashCode() % mTableSize;
+      if (hashValue < 0)
+         hashValue += mTableSize;
+      return hashValue;
+   }
+   
+   //a trivial modification to findPos() which uses the key rather than the object, to get a position.
+   protected int findPosKey(KeyType key)
+   {
+      int kthOddNum = 1;
+      int index = myHashKey(key);
+      
+      while (mArray[index].state != EMPTY && mArray[index].data.compareTo(key) != 0)
+      {
+         index += kthOddNum;
+         kthOddNum += 2;
+         if (index >= mTableSize)
+            index -= mTableSize;
+      }
+      return index;
+   }
+   
+}
+/*--------------------SAMPLE RUN----------------------------
+ *    # 28498  ---------------
+   "The Speaker, No. 5: Volume II, Issue 1December, 1906."
+   by Various
+   re: Recitations
+
+
+   # 28907  ---------------
+   "Book of Philemon"
+   by (no data found)
+   re: Bible. N.T. Epistles of Paul
+
+
+   # 28272  ---------------
+   "Biographia Scoticana (Scots Worthies)A Brief Historical Account of the Lives
+, Characters, and Memorable Transactions of the Most Eminent Scots Worthies"
+   by Howie, John, 1735-1793
+   re: Church of Scotland -- Biography
+
+
+   # 28308  ---------------
+   "The Children's Book of Christmas Stories"
+   by (no data found)
+   re: Christmas stories
+
+
+   # 27589  ---------------
+   "Coronation Anecdotes"
+   by Gossip, Giles
+   re: Coronations -- Great Britain
+
+
+   # 25541  ---------------
+   "American Eloquence, an Index of the Four VolumesStudies In American Politica
+l History - 1896"
+   by (no data found)
+   re: United States -- Politics and government
+
+
+   # 29468  ---------------
+   "The Story of Don Quixote"
+   by Cervantes Saavedra, Miguel de, 1547-1616
+   re: Spain -- Social life and customs -- 16th century -- Fiction
+
+
+   # 3159  ---------------
+   "The Hermit of Far End"
+   by Pedler, Margaret, -1948
+   re: England -- Fiction
+
+
+   # 28183  ---------------
+   "Shadow and LightAn Autobiography with Reminiscences of the Last and Present 
+Century"
+   by Gibbs, Mifflin Wistar
+   re: African Americans
+
+
+   # 14458  ---------------
+   "A History of Trade Unionism in the United States"
+   by Perlman, Selig, 1888-1959
+   re: (no data found)
+
+
+   # 26293  ---------------
+   "The Wind in the Willows"
+   by Grahame, Kenneth, 1859-1932
+   re: Fantasy fiction
+
+
+   # 19188  ---------------
+   "Poems"
+   by Rossetti, Christina Georgina, 1830-1894
+   re: (no data found)
+
+
+   # 176  ---------------
+   "Roderick Hudson"
+   by James, Henry, 1843-1916
+   re: Fiction
+
+
+   # 2861  ---------------
+   "The Sleuth of St. James's Square"
+   by Post, Melville Davisson, 1871?-1930
+   re: Detective and mystery stories, English
+
+
+   # 29022  ---------------
+   "Mr. Punch AwheelThe Humours of Motoring and Cycling"
+   by (no data found)
+   re: English wit and humor
+
+
+   # 26238  ---------------
+   "Vixen, Volume III."
+   by Braddon, M. E. (Mary Elizabeth), 1835-1915
+   re: Psychological fiction
+
+
+   # 26730  ---------------
+   "Turandot, Princess of ChinaA Chinoiserie in Three Acts"
+   by Gozzi, Carlo, 1720-1806
+   re: Drama
+
+
+   # 29365  ---------------
+   "Browning's EnglandA Study in English Influences in Browning"
+   by Clarke, Helen Archibald, -1926
+   re: Browning, Robert, 1812-1889 -- Homes and haunts -- England
+
+
+   # 26293  ---------------
+   "The Wind in the Willows"
+   by Grahame, Kenneth, 1859-1932
+   re: Fantasy fiction
+
+
+   # 28398  ---------------
+   ""
+   by (no data found)
+   re: Exchange of publications
+
+
+   # 6349  ---------------
+   "Copyright Renewals 1954"
+   by Library of Congress. Copyright Office
+   re: Copyright -- United States -- Catalogs
+
+
+   # 28607  ---------------
+   "The Road and the Roadside"
+   by Potter, Burton Willis, 1843-1927
+   re: Roads
+
+
+   # 24927  ---------------
+   "A Matter of Magnitude"
+   by Sevcik, Al
+   re: Science fiction
+
+
+   # 23469  ---------------
+   "A History of the Four Georges, Volume I (of 4)"
+   by McCarthy, Justin, 1830-1912
+   re: Great Britain -- History -- 1714-1837
+
+
+   # 25395  ---------------
+   "The Ministry of the Spirit"
+   by Gordon, A. J. (Adoniram Judson), 1836-1895
+   re: Holy Spirit
+
+
+The same random books from the hash table 
+Not Found
+Not Found
+Not Found
+Not Found
+Not Found
+Not Found
+Not Found
+Not Found
+Not Found
+Not Found
+Not Found
+Not Found
+Not Found
+Not Found
+Not Found
+Not Found
+Not Found
+Not Found
+Not Found
+Not Found
+Not Found
+Not Found
+Not Found
+Not Found
+Not Found
+Not found
+Not found
+-----------------------------END RUN---------------------*/

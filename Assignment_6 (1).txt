@@ -1,0 +1,204 @@
+import java.util.Scanner;
+
+public class Foothill 
+{
+   public static void main(String[] args)
+   {
+      //delcare the refrences
+      TripleString triple1, triple2, triple3, triple4;
+      
+      //instantiate the objects
+      triple1 = new TripleString();
+      triple2 = new TripleString();
+      triple3 = new TripleString();
+      triple4 = new TripleString();
+      
+      //display all objects immediately
+      System.out.println("First Batch of Strings");
+      System.out.println(triple1.toString());
+      System.out.println("Second Batch of Strings");
+      System.out.println(triple2.toString());
+      System.out.println("Third Batch of Strings");
+      System.out.println(triple3.toString());
+      System.out.println("Fourth Batch of Strings");
+      System.out.println(triple4.toString());
+      System.out.println("-------------------");
+      
+      //mutate the data
+      triple1.setString1("Kurt Cobain");
+      triple1.setString2("David Grohl");
+      triple1.setString3("Krist Novoselic");
+      
+      triple2.setString1("Sting");
+      triple2.setString2("Andy Summers");
+      triple2.setString3("Stewart Copeland");
+
+      triple3.setString1("Jimi Hendrix");
+      triple3.setString2("Noel Redding");
+      triple3.setString3("Mitch Mitchell");
+
+      triple4.setString1("John Lennon");
+      triple4.setString2("Paul McCartney");
+      triple4.setString3("George Harrison");
+      
+      //display objects once again
+      System.out.println("First Batch of Strings");
+      System.out.println(triple1.toString());
+      System.out.println("Second Batch of Strings");
+      System.out.println(triple2.toString());
+      System.out.println("Third Batch of Strings");
+      System.out.println(triple3.toString());
+      System.out.println("Fourth Batch of Strings");
+      System.out.println(triple4.toString());
+      
+      //mutator test 1
+      triple4.setString3("Ringo Starr");
+      if (triple4.getString3() != "Ringo Starr")
+         System.out.println("Failure");
+      else 
+         System.out.println("Success");
+      
+      //mutator test 2
+      triple1.setString1("After the death of Kurt Cobain, the group Nivana +"
+            + "disbanded and Dave Grohl decided to start Foo Fighters");
+      if (triple1.getString1() != "After the death of Kurt Cobain, the group"
+            + " Nivana disbanded and Dave Grohl decided to start Foo "
+            + "Fighters")
+         System.out.println("Failure");
+      else 
+         System.out.println("Success");
+      
+    //accessor call 1
+      System.out.println("\nFourth batch, string three: " + triple4.getString3());
+      
+      //accessor call 2
+      System.out.println("First batch, string one: " + triple1.getString1());
+   }
+}
+
+class TripleString
+{
+   //member data
+   private String string1;
+   private String string2;
+   private String string3;
+   
+   //static constants
+   public static final int MAX_LEN = 49;
+   public static final int MIN_LEN = 0;
+   public static final String DEFAULT_STRING = "(undefined)";
+   
+   //default constructor
+   TripleString()
+   {
+      string1 = DEFAULT_STRING;
+      string2 = DEFAULT_STRING;
+      string3 = DEFAULT_STRING;
+   }
+   
+   //three parameter constructor
+   TripleString(String str1, String str2, String str3)
+   {
+      if(!setString1(str1))
+         string1 = DEFAULT_STRING;
+      if(!setString2(str2))
+         string2 = DEFAULT_STRING;
+      if(!setString3(str3))
+         string3 = DEFAULT_STRING;
+   }
+   
+   //accessor "set" method
+   public boolean setString1(String str1)
+   {
+      if (str1 == null || str1.length() > MAX_LEN)
+         return false;
+      //else
+      string1 = str1;
+      return true;
+   }
+   public boolean setString2(String str2)
+   {
+      if (str2 == null || str2.length() > MAX_LEN)
+         return false;
+      //else
+      string2 = str2;
+      return true;
+   }
+   public boolean setString3(String str3)
+   {
+      if (str3 == null || str3.length() > MAX_LEN)
+         return false;
+      //else
+      string3 = str3;
+      return true;
+   }
+   
+   //accessor "get" method
+   public String getString1()
+   {
+      return string1;
+   }
+   public String getString2()
+   {
+      return string2;
+   }
+   public String getString3()
+   {
+      return string3;
+   }
+   
+   //string will group all strings together here.
+   public String toString()
+   {
+      return "String1: " + string1 + "\nString2: " + string2 + 
+            "\nString3: " + string3 + "\n";
+   }
+}
+/*------------Run---------------
+ First Batch of Strings
+String1: (undefined)
+String2: (undefined)
+String3: (undefined)
+
+Second Batch of Strings
+String1: (undefined)
+String2: (undefined)
+String3: (undefined)
+
+Third Batch of Strings
+String1: (undefined)
+String2: (undefined)
+String3: (undefined)
+
+Fourth Batch of Strings
+String1: (undefined)
+String2: (undefined)
+String3: (undefined)
+
+-------------------
+First Batch of Strings
+String1: Kurt Cobain
+String2: David Grohl
+String3: Krist Novoselic
+
+Second Batch of Strings
+String1: Sting
+String2: Andy Summers
+String3: Stewart Copeland
+
+Third Batch of Strings
+String1: Jimi Hendrix
+String2: Noel Redding
+String3: Mitch Mitchell
+
+Fourth Batch of Strings
+String1: John Lennon
+String2: Paul McCartney
+String3: George Harrison
+
+Success
+Failure
+
+Fourth batch, string three: Ringo Starr
+First batch, string one: Kurt Cobain
+-----------end run---------------*/

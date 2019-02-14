@@ -1,0 +1,820 @@
+//Oscar Ramirez
+//CS 1C Assigment 10
+package StarNearEarth_Folder;
+
+import cs_1c.*;
+import java.util.*;
+import java.text.*;
+
+//------------------------------------------------------
+public class Foothill
+{
+   // ------- main --------------
+   public static void main(String[] args) throws Exception
+   {
+      // how we read the data from files
+      StarNearEarthReader starInput = 
+            new StarNearEarthReader("nearest_stars.txt");
+      int arraySize;
+
+      // how we test the success of the read:
+      if (starInput.readError())
+      {
+         System.out.println("couldn't open " + 
+      starInput.getFileName() + " for input.");
+         return;
+      }
+
+      System.out.println(starInput.getFileName());
+      System.out.println(starInput.getNumStars());
+
+      // create an array of objects for our own use:
+      arraySize = starInput.getNumStars();
+      StarNearEarth[] starArray = new StarNearEarth[arraySize];
+      for (int k = 0; k < arraySize; k++)
+         starArray[k] = starInput.getStar(k);
+
+      // show the array, unsorted
+      for (int k = 0; k < arraySize; k++)
+         System.out.println(starArray[k]);
+      System.out.println();
+   }
+}
+
+class SNE_Analyzer extends StarNearEarth
+{
+   private double x, y, z;
+
+   // constructors
+   public SNE_Analyzer()
+   {
+      super();
+      x = 0;
+      y = 0;
+      z = 0;
+   }
+
+   // construct an SNE_Analyzer from a StartNearEarth object
+   public SNE_Analyzer(StarNearEarth sne)
+   {
+      setRank(sne.getRank());
+      setNameCns(sne.getNameCns());
+      setNumComponents(sne.getNumComponents());
+      setNameLhs(sne.getNameLhs());
+      setRAsc(sne.getRAsc());
+      setDec(sne.getDec());
+      setPropMotionMag(sne.getPropMotionMag());
+      setPropMotionDir(sne.getPropMotionDir());
+      setParallaxMean(sne.getParallaxMean());
+      setParallaxVariance(sne.getParallaxVariance());
+      SetBWhiteDwarfFlag(sne.getWhiteDwarfFlag());
+      setSpectralType(sne.getSpectralType());
+      setMagApparent(sne.getMagApparent());
+      setMagAbsolute(sne.getMagAbsolute());
+      setMass(sne.getMass());
+      setNotes(sne.getNotes());
+      setNameCommon(sne.getNameCommon());
+      calcCartCoords();
+   }
+
+   // accessors
+   double getX()
+   {
+      return x;
+   }
+
+   double getY()
+   {
+      return y;
+   }
+
+   double getZ()
+   {
+      return z;
+   }
+
+   public void calcCartCoords()
+   {
+      x = 3.262 / (getParallaxMean()) * 
+            Math.cos(Math.toRadians(getDec())) * 
+            Math.cos(Math.toRadians(getRAsc()));
+      y = 3.262 / (getParallaxMean()) * 
+            Math.cos(Math.toRadians(getDec())) * 
+            Math.sin(Math.toRadians(getRAsc()));
+      z = 3.262 / (getParallaxMean()) * 
+            Math.sin(Math.toRadians(getDec()));
+   }
+
+   public String coordToString()
+   {
+      DecimalFormat df = new DecimalFormat("##.####");
+      return String.format("x : %15s y : %15s z: %15s", 
+            df.format(x), df.format(y), df.format(z));
+   }
+}
+/*
+ * ---------------- Sample Run ----------------
+nearest_stars.txt
+100
+   #1.  "Proxima Centauri"  ----------
+    LHS Name: 49 CNS Name: GJ  551        
+    Apparent Mag: 11.09
+    Parallax Mean: 0.76887 variance: 2.9E-4
+    Right Asc: 217.4292 Dec: -62.6794
+    Mass: 0.11 Prop Mot Mag: 3.853
+
+   #2.  "Barnard's Star"  ----------
+    LHS Name: 57 CNS Name: GJ  699        
+    Apparent Mag: 9.53
+    Parallax Mean: 0.54698 variance: 0.001
+    Right Asc: 269.45 Dec: 4.6933
+    Mass: 0.17 Prop Mot Mag: 10.358
+
+   #3.  "Wolf 359"  ----------
+    LHS Name: 36 CNS Name: GJ  406        
+    Apparent Mag: 13.44
+    Parallax Mean: 0.4191 variance: 0.0021
+    Right Asc: 164.1208 Dec: 7.0147
+    Mass: 0.09 Prop Mot Mag: 4.696
+
+   #4.  "Lalande 21185"  ----------
+    LHS Name: 37 CNS Name: GJ  411        
+    Apparent Mag: 7.47
+    Parallax Mean: 0.39342 variance: 7.0E-4
+    Right Asc: 165.8333 Dec: 35.97
+    Mass: 0.46 Prop Mot Mag: 4.802
+
+   #5.  "Sirius"  ----------
+    LHS Name: 219 CNS Name: GJ  244    A   
+    Apparent Mag: -1.43
+    Parallax Mean: 0.38002 variance: 0.00128
+    Right Asc: 101.2833 Dec: -16.7161
+    Mass: 1.99 Prop Mot Mag: 1.339
+
+   #6.  "BL Ceti"  ----------
+    LHS Name: 9 CNS Name: GJ   65    A   
+    Apparent Mag: 12.54
+    Parallax Mean: 0.3737 variance: 0.0027
+    Right Asc: 24.7542 Dec: -17.9503
+    Mass: 0.11 Prop Mot Mag: 3.368
+
+   #7.  "Ross 154"  ----------
+    LHS Name: 3414 CNS Name: GJ  729        
+    Apparent Mag: 10.43
+    Parallax Mean: 0.3369 variance: 0.00178
+    Right Asc: 282.4542 Dec: -23.8361
+    Mass: 0.17 Prop Mot Mag: 0.666
+
+   #8.  "Ross 248"  ----------
+    LHS Name: 549 CNS Name: GJ  905        
+    Apparent Mag: 12.29
+    Parallax Mean: 0.316 variance: 0.0011
+    Right Asc: 355.475 Dec: 44.175
+    Mass: 0.12 Prop Mot Mag: 1.617
+
+   #9.  "epsilon Eridani"  ----------
+    LHS Name: 1557 CNS Name: GJ  144        
+    Apparent Mag: 3.73
+    Parallax Mean: 0.30999 variance: 7.9E-4
+    Right Asc: 53.2292 Dec: -9.4583
+    Mass: 0.85 Prop Mot Mag: 0.977
+
+   #10.  "Lacaille 9352"  ----------
+    LHS Name: 70 CNS Name: GJ  887        
+    Apparent Mag: 7.34
+    Parallax Mean: 0.30364 variance: 8.7E-4
+    Right Asc: 346.4667 Dec: -35.8531
+    Mass: 0.53 Prop Mot Mag: 6.896
+
+   #11.  "Ross 128"  ----------
+    LHS Name: 315 CNS Name: GJ  447        
+    Apparent Mag: 11.13
+    Parallax Mean: 0.29872 variance: 0.00135
+    Right Asc: 176.9333 Dec: -0.8044
+    Mass: 0.16 Prop Mot Mag: 1.361
+
+   #12.  "EZ Aquarii A"  ----------
+    LHS Name: 68 CNS Name: GJ  866    A   
+    Apparent Mag: 13.33
+    Parallax Mean: 0.2895 variance: 0.0044
+    Right Asc: 339.6375 Dec: -15.3019
+    Mass: 0.11 Prop Mot Mag: 3.254
+
+   #13.  "Procyon"  ----------
+    LHS Name: 233 CNS Name: GJ  280    A   
+    Apparent Mag: 0.38
+    Parallax Mean: 0.28605 variance: 8.1E-4
+    Right Asc: 114.825 Dec: 5.225
+    Mass: 1.57 Prop Mot Mag: 1.259
+
+   #14.  "61 Cygni A"  ----------
+    LHS Name: 62 CNS Name: GJ  820    A   
+    Apparent Mag: 5.21
+    Parallax Mean: 0.28604 variance: 5.6E-4
+    Right Asc: 316.7208 Dec: 38.7494
+    Mass: 0.7 Prop Mot Mag: 5.281
+
+   #15.  "(no common name)"  ----------
+    LHS Name: 58 CNS Name: GJ  725    A   
+    Apparent Mag: 8.9
+    Parallax Mean: 0.283 variance: 0.00169
+    Right Asc: 280.6917 Dec: 59.6303
+    Mass: 0.35 Prop Mot Mag: 2.238
+
+   #16.  "GX Andromedae"  ----------
+    LHS Name: 3 CNS Name: GJ   15    A   
+    Apparent Mag: 8.08
+    Parallax Mean: 0.28059 variance: 9.5E-4
+    Right Asc: 4.5917 Dec: 44.0231
+    Mass: 0.49 Prop Mot Mag: 2.918
+
+   #17.  "epsilon Indi A"  ----------
+    LHS Name: 67 CNS Name: GJ  845    A   
+    Apparent Mag: 4.69
+    Parallax Mean: 0.27584 variance: 6.9E-4
+    Right Asc: 330.8375 Dec: -56.7861
+    Mass: 0.77 Prop Mot Mag: 4.704
+
+   #18.  "DX Cancri"  ----------
+    LHS Name: 248 CNS Name: GJ 1111        
+    Apparent Mag: 14.78
+    Parallax Mean: 0.2758 variance: 0.003
+    Right Asc: 127.4542 Dec: 26.7769
+    Mass: 0.09 Prop Mot Mag: 1.29
+
+   #19.  "tau Ceti"  ----------
+    LHS Name: 146 CNS Name: GJ   71        
+    Apparent Mag: 3.49
+    Parallax Mean: 0.27439 variance: 7.6E-4
+    Right Asc: 26.0167 Dec: -15.9375
+    Mass: 0.92 Prop Mot Mag: 1.922
+
+   #20.  "Henry et al. 1997, Henry et al. 2006"  ----------
+    LHS Name: 1565 CNS Name: GJ 1061        
+    Apparent Mag: 13.09
+    Parallax Mean: 0.27201 variance: 0.0013
+    Right Asc: 53.9958 Dec: -44.5125
+    Mass: 0.11 Prop Mot Mag: 0.826
+
+   #21.  "YZ Ceti"  ----------
+    LHS Name: 138 CNS Name: GJ   54.1      
+    Apparent Mag: 12.02
+    Parallax Mean: 0.26884 variance: 0.00295
+    Right Asc: 18.125 Dec: -16.9989
+    Mass: 0.14 Prop Mot Mag: 1.372
+
+   #22.  "Luyten's Star"  ----------
+    LHS Name: 33 CNS Name: GJ  273        
+    Apparent Mag: 9.86
+    Parallax Mean: 0.26376 variance: 0.00125
+    Right Asc: 111.85 Dec: 5.2258
+    Mass: 0.26 Prop Mot Mag: 3.738
+
+   #23.  "Henry et al. 2006"  ----------
+    LHS Name: 0 CNS Name: SO 0253+1652   
+    Apparent Mag: 15.14
+    Parallax Mean: 0.26063 variance: 0.00269
+    Right Asc: 43.25 Dec: 16.8814
+    Mass: 0.08 Prop Mot Mag: 5.106
+
+   #24.  "Henry et al. 2006"  ----------
+    LHS Name: 0 CNS Name: SCR 1845-6357 A
+    Apparent Mag: 17.4
+    Parallax Mean: 0.25945 variance: 0.00111
+    Right Asc: 281.2708 Dec: -63.9633
+    Mass: 0.07 Prop Mot Mag: 2.664
+
+   #25.  "Kapteyn's Star"  ----------
+    LHS Name: 29 CNS Name: GJ  191        
+    Apparent Mag: 8.84
+    Parallax Mean: 0.25527 variance: 8.6E-4
+    Right Asc: 77.9167 Dec: -45.0183
+    Mass: 0.39 Prop Mot Mag: 8.67
+
+   #26.  "AX Microscopii"  ----------
+    LHS Name: 66 CNS Name: GJ  825        
+    Apparent Mag: 6.67
+    Parallax Mean: 0.25343 variance: 0.00112
+    Right Asc: 319.3125 Dec: -38.8675
+    Mass: 0.6 Prop Mot Mag: 3.455
+
+   #27.  "Kruger 60 A"  ----------
+    LHS Name: 3814 CNS Name: GJ  860    A   
+    Apparent Mag: 9.79
+    Parallax Mean: 0.24806 variance: 0.00139
+    Right Asc: 336.9958 Dec: 57.6958
+    Mass: 0.28 Prop Mot Mag: 0.99
+
+   #28.  "Jao et al. 2005, Costa et al. 2005"  ----------
+    LHS Name: 0 CNS Name: DEN 1048-3956  
+    Apparent Mag: 17.39
+    Parallax Mean: 0.24771 variance: 0.00155
+    Right Asc: 162.0583 Dec: -39.935
+    Mass: 0.07 Prop Mot Mag: 1.53
+
+   #29.  "Ross 614 A"  ----------
+    LHS Name: 1849 CNS Name: GJ  234    A   
+    Apparent Mag: 11.15
+    Parallax Mean: 0.24434 variance: 0.00201
+    Right Asc: 97.3458 Dec: -2.8139
+    Mass: 0.17 Prop Mot Mag: 0.93
+
+   #30.  "Wolf 1061"  ----------
+    LHS Name: 419 CNS Name: GJ  628        
+    Apparent Mag: 10.07
+    Parallax Mean: 0.23601 variance: 0.00167
+    Right Asc: 247.575 Dec: -12.6625
+    Mass: 0.26 Prop Mot Mag: 1.189
+
+   #31.  "van Maanen's Star"  ----------
+    LHS Name: 7 CNS Name: GJ   35        
+    Apparent Mag: 12.38
+    Parallax Mean: 0.23188 variance: 0.00179
+    Right Asc: 12.2875 Dec: 5.3886
+    Mass: 0.5 Prop Mot Mag: 2.978
+
+   #32.  "(no common name)"  ----------
+    LHS Name: 1 CNS Name: GJ    1        
+    Apparent Mag: 8.55
+    Parallax Mean: 0.2292 variance: 0.00107
+    Right Asc: 1.35 Dec: -37.3575
+    Mass: 0.48 Prop Mot Mag: 6.1
+
+   #33.  "Wolf 424 A"  ----------
+    LHS Name: 333 CNS Name: GJ  473    A   
+    Apparent Mag: 13.18
+    Parallax Mean: 0.2279 variance: 0.0046
+    Right Asc: 188.3208 Dec: 9.0208
+    Mass: 0.12 Prop Mot Mag: 1.811
+
+   #34.  "TZ Arietis"  ----------
+    LHS Name: 11 CNS Name: GJ   83.1      
+    Apparent Mag: 12.27
+    Parallax Mean: 0.2248 variance: 0.0029
+    Right Asc: 30.0542 Dec: 13.0522
+    Mass: 0.14 Prop Mot Mag: 2.097
+
+   #35.  "(no common name)"  ----------
+    LHS Name: 450 CNS Name: GJ  687        
+    Apparent Mag: 9.17
+    Parallax Mean: 0.22049 variance: 8.2E-4
+    Right Asc: 264.1042 Dec: 68.3392
+    Mass: 0.39 Prop Mot Mag: 1.309
+
+   #36.  "(no common name)"  ----------
+    LHS Name: 292 CNS Name: LHS 292        
+    Apparent Mag: 15.6
+    Parallax Mean: 0.2203 variance: 0.0036
+    Right Asc: 162.05 Dec: -11.3372
+    Mass: 0.08 Prop Mot Mag: 1.644
+
+   #37.  "(no common name)"  ----------
+    LHS Name: 449 CNS Name: GJ  674        
+    Apparent Mag: 9.38
+    Parallax Mean: 0.22025 variance: 0.00159
+    Right Asc: 262.1625 Dec: -46.8953
+    Mass: 0.36 Prop Mot Mag: 1.05
+
+   #38.  "G 208-044 A"  ----------
+    LHS Name: 3494 CNS Name: GJ 1245    A   
+    Apparent Mag: 13.46
+    Parallax Mean: 0.2202 variance: 0.001
+    Right Asc: 298.475 Dec: 44.4153
+    Mass: 0.11 Prop Mot Mag: 0.731
+
+   #39.  "WD 1142-645"  ----------
+    LHS Name: 43 CNS Name: GJ  440        
+    Apparent Mag: 11.5
+    Parallax Mean: 0.21657 variance: 0.00201
+    Right Asc: 176.425 Dec: -64.8414
+    Mass: 0.5 Prop Mot Mag: 2.688
+
+   #40.  "(no common name)"  ----------
+    LHS Name: 2 CNS Name: GJ 1002        
+    Apparent Mag: 13.76
+    Parallax Mean: 0.213 variance: 0.0036
+    Right Asc: 1.6792 Dec: -7.5394
+    Mass: 0.11 Prop Mot Mag: 2.041
+
+   #41.  "Ross 780"  ----------
+    LHS Name: 530 CNS Name: GJ  876    A   
+    Apparent Mag: 10.17
+    Parallax Mean: 0.21259 variance: 0.00196
+    Right Asc: 343.3167 Dec: -14.2636
+    Mass: 0.27 Prop Mot Mag: 1.174
+
+   #42.  "Henry et al. 2006"  ----------
+    LHS Name: 288 CNS Name: LHS 288        
+    Apparent Mag: 13.9
+    Parallax Mean: 0.20895 variance: 0.00273
+    Right Asc: 161.0875 Dec: -61.21
+    Mass: 0.11 Prop Mot Mag: 1.643
+
+   #43.  "(no common name)"  ----------
+    LHS Name: 38 CNS Name: GJ  412    A   
+    Apparent Mag: 8.77
+    Parallax Mean: 0.20602 variance: 0.00108
+    Right Asc: 166.3667 Dec: 43.5267
+    Mass: 0.48 Prop Mot Mag: 4.511
+
+   #44.  "(no common name)"  ----------
+    LHS Name: 280 CNS Name: GJ  380        
+    Apparent Mag: 6.59
+    Parallax Mean: 0.20581 variance: 6.7E-4
+    Right Asc: 152.8417 Dec: 49.4542
+    Mass: 0.64 Prop Mot Mag: 1.452
+
+   #45.  "(no common name)"  ----------
+    LHS Name: 5167 CNS Name: GJ  388        
+    Apparent Mag: 9.32
+    Parallax Mean: 0.2046 variance: 0.0028
+    Right Asc: 154.9 Dec: 19.8694
+    Mass: 0.39 Prop Mot Mag: 0.506
+
+   #46.  "(no common name)"  ----------
+    LHS Name: 3685 CNS Name: GJ  832        
+    Apparent Mag: 8.66
+    Parallax Mean: 0.20278 variance: 0.00132
+    Right Asc: 323.3917 Dec: -49.0089
+    Mass: 0.5 Prop Mot Mag: 0.819
+
+   #47.  "(no common name)"  ----------
+    LHS Name: 0 CNS Name: LP 944-020     
+    Apparent Mag: 18.5
+    Parallax Mean: 0.2014 variance: 0.0042
+    Right Asc: 54.8958 Dec: -35.4281
+    Mass: 0.07 Prop Mot Mag: 0.439
+
+   #48.  "Costa et al. 2005"  ----------
+    LHS Name: 0 CNS Name: DEN 0255-4700  
+    Apparent Mag: 22.92
+    Parallax Mean: 0.20137 variance: 0.00389
+    Right Asc: 43.7625 Dec: -47.0144
+    Mass: 0.07 Prop Mot Mag: 1.149
+
+   #49.  "(no common name)"  ----------
+    LHS Name: 451 CNS Name: GJ  682        
+    Apparent Mag: 10.95
+    Parallax Mean: 0.19965 variance: 0.0023
+    Right Asc: 264.2625 Dec: -44.3192
+    Mass: 0.21 Prop Mot Mag: 1.176
+
+   #50.  "omicron 2 Eridani"  ----------
+    LHS Name: 23 CNS Name: GJ  166    A   
+    Apparent Mag: 4.43
+    Parallax Mean: 0.199 variance: 7.7E-4
+    Right Asc: 63.8167 Dec: -7.6528
+    Mass: 0.89 Prop Mot Mag: 4.088
+
+   #51.  "EV Lacertae"  ----------
+    LHS Name: 3853 CNS Name: GJ  873        
+    Apparent Mag: 10.22
+    Parallax Mean: 0.19804 variance: 0.00161
+    Right Asc: 341.7042 Dec: 44.3339
+    Mass: 0.29 Prop Mot Mag: 0.841
+
+   #52.  "70 Ophiuchi A"  ----------
+    LHS Name: 458 CNS Name: GJ  702    A   
+    Apparent Mag: 4.2
+    Parallax Mean: 0.19596 variance: 8.7E-4
+    Right Asc: 271.3625 Dec: 2.5
+    Mass: 0.92 Prop Mot Mag: 0.971
+
+   #53.  "Altair"  ----------
+    LHS Name: 3490 CNS Name: GJ  768        
+    Apparent Mag: 0.77
+    Parallax Mean: 0.19497 variance: 8.6E-4
+    Right Asc: 297.6958 Dec: 8.8683
+    Mass: 1.71 Prop Mot Mag: 0.661
+
+   #54.  "EI Cancri"  ----------
+    LHS Name: 2076 CNS Name: GJ 1116    A   
+    Apparent Mag: 14.06
+    Parallax Mean: 0.1912 variance: 0.0025
+    Right Asc: 134.5583 Dec: 19.7619
+    Mass: 0.11 Prop Mot Mag: 0.874
+
+   #55.  "Henry et al. 2006"  ----------
+    LHS Name: 0 CNS Name: G 099-049      
+    Apparent Mag: 11.31
+    Parallax Mean: 0.19093 variance: 0.00189
+    Right Asc: 90.0125 Dec: 2.7067
+    Mass: 0.19 Prop Mot Mag: 0.313
+
+   #56.  "Henry et al. 2006"  ----------
+    LHS Name: 1723 CNS Name: LHS 1723       
+    Apparent Mag: 12.22
+    Parallax Mean: 0.18792 variance: 0.00126
+    Right Asc: 75.4875 Dec: -6.9464
+    Mass: 0.15 Prop Mot Mag: 0.769
+
+   #57.  "(no common name)"  ----------
+    LHS Name: 2459 CNS Name: GJ  445        
+    Apparent Mag: 10.79
+    Parallax Mean: 0.18584 variance: 0.00139
+    Right Asc: 176.9208 Dec: 78.6911
+    Mass: 0.24 Prop Mot Mag: 0.885
+
+   #58.  "Wolf 498"  ----------
+    LHS Name: 47 CNS Name: GJ  526        
+    Apparent Mag: 8.46
+    Parallax Mean: 0.18421 variance: 0.00116
+    Right Asc: 206.4292 Dec: 14.8914
+    Mass: 0.53 Prop Mot Mag: 2.298
+
+   #59.  "(no common name)"  ----------
+    LHS Name: 0 CNS Name: LP 816-060     
+    Apparent Mag: 11.41
+    Parallax Mean: 0.18215 variance: 0.00368
+    Right Asc: 313.1375 Dec: -16.9747
+    Mass: 0.19 Prop Mot Mag: 0.308
+
+   #60.  "Stein 2051"  ----------
+    LHS Name: 26 CNS Name: GJ  169.1  A   
+    Apparent Mag: 11.04
+    Parallax Mean: 0.18063 variance: 7.8E-4
+    Right Asc: 67.7958 Dec: 58.9772
+    Mass: 0.22 Prop Mot Mag: 2.427
+
+   #61.  "(no common name)"  ----------
+    LHS Name: 1879 CNS Name: GJ  251        
+    Apparent Mag: 10.02
+    Parallax Mean: 0.17958 variance: 0.00161
+    Right Asc: 103.7042 Dec: 33.2681
+    Mass: 0.33 Prop Mot Mag: 0.831
+
+   #62.  "(no common name)"  ----------
+    LHS Name: 0 CNS Name: 2MA 1835+3259  
+    Apparent Mag: 18.27
+    Parallax Mean: 0.1765 variance: 5.0E-4
+    Right Asc: 278.9042 Dec: 32.9983
+    Mass: 0.07 Prop Mot Mag: 0.759
+
+   #63.  "Wolf 1453"  ----------
+    LHS Name: 30 CNS Name: GJ  205        
+    Apparent Mag: 7.95
+    Parallax Mean: 0.17517 variance: 0.00105
+    Right Asc: 82.8625 Dec: -3.6772
+    Mass: 0.57 Prop Mot Mag: 2.228
+
+   #64.  "(no common name)"  ----------
+    LHS Name: 0 CNS Name: 2MA 0415-0935  
+    Apparent Mag: 0.0
+    Parallax Mean: 0.17434 variance: 0.00276
+    Right Asc: 63.8292 Dec: -9.5833
+    Mass: 0.0 Prop Mot Mag: 2.255
+
+   #65.  "sigma Draconis"  ----------
+    LHS Name: 477 CNS Name: GJ  764        
+    Apparent Mag: 4.68
+    Parallax Mean: 0.17359 variance: 4.1E-4
+    Right Asc: 293.0875 Dec: 69.6611
+    Mass: 0.89 Prop Mot Mag: 1.839
+
+   #66.  "(no common name)"  ----------
+    LHS Name: 1827 CNS Name: GJ  229    A   
+    Apparent Mag: 8.12
+    Parallax Mean: 0.17317 variance: 0.0011
+    Right Asc: 92.6417 Dec: -21.8647
+    Mass: 0.56 Prop Mot Mag: 0.727
+
+   #67.  "(no common name)"  ----------
+    LHS Name: 454 CNS Name: GJ  693        
+    Apparent Mag: 10.75
+    Parallax Mean: 0.17169 variance: 0.00214
+    Right Asc: 266.6417 Dec: -57.3192
+    Mass: 0.26 Prop Mot Mag: 1.756
+
+   #68.  "Wolf 1055"  ----------
+    LHS Name: 473 CNS Name: GJ  752    A   
+    Apparent Mag: 9.11
+    Parallax Mean: 0.17101 variance: 6.2E-4
+    Right Asc: 289.2292 Dec: 5.1689
+    Mass: 0.49 Prop Mot Mag: 1.452
+
+   #69.  "Ross 47"  ----------
+    LHS Name: 31 CNS Name: GJ  213        
+    Apparent Mag: 11.51
+    Parallax Mean: 0.17037 variance: 0.00309
+    Right Asc: 85.5375 Dec: 12.4894
+    Mass: 0.2 Prop Mot Mag: 2.542
+
+   #70.  "(no common name)"  ----------
+    LHS Name: 387 CNS Name: GJ  570    A   
+    Apparent Mag: 5.75
+    Parallax Mean: 0.16985 variance: 8.2E-4
+    Right Asc: 224.3667 Dec: -21.4156
+    Mass: 0.76 Prop Mot Mag: 2.012
+
+   #71.  "Jao et al. 2005"  ----------
+    LHS Name: 60 CNS Name: GJ  754        
+    Apparent Mag: 12.23
+    Parallax Mean: 0.16903 variance: 0.00155
+    Right Asc: 290.2 Dec: -45.5575
+    Mass: 0.16 Prop Mot Mag: 2.945
+
+   #72.  "(no common name)"  ----------
+    LHS Name: 550 CNS Name: GJ  908        
+    Apparent Mag: 8.99
+    Parallax Mean: 0.16851 variance: 0.0014
+    Right Asc: 357.3 Dec: 2.4011
+    Mass: 0.51 Prop Mot Mag: 1.388
+
+   #73.  "eta Cassiopei A"  ----------
+    LHS Name: 123 CNS Name: GJ   34    A   
+    Apparent Mag: 3.45
+    Parallax Mean: 0.16838 variance: 5.9E-4
+    Right Asc: 12.275 Dec: 57.8153
+    Mass: 1.11 Prop Mot Mag: 1.223
+
+   #74.  "(no common name)"  ----------
+    LHS Name: 397 CNS Name: GJ  588        
+    Apparent Mag: 9.31
+    Parallax Mean: 0.16836 variance: 0.00138
+    Right Asc: 233.05 Dec: -41.2756
+    Mass: 0.46 Prop Mot Mag: 1.564
+
+   #75.  "(no common name)"  ----------
+    LHS Name: 1047 CNS Name: GJ 1005    A   
+    Apparent Mag: 11.58
+    Parallax Mean: 0.16806 variance: 8.2E-4
+    Right Asc: 3.8667 Dec: -16.1339
+    Mass: 0.18 Prop Mot Mag: 0.955
+
+   #76.  "Ross 882"  ----------
+    LHS Name: 1943 CNS Name: GJ  285        
+    Apparent Mag: 11.19
+    Parallax Mean: 0.16754 variance: 0.00228
+    Right Asc: 116.1667 Dec: 3.5525
+    Mass: 0.23 Prop Mot Mag: 0.568
+
+   #77.  "36 Ophiuchi A"  ----------
+    LHS Name: 437 CNS Name: GJ  663    A   
+    Apparent Mag: 5.07
+    Parallax Mean: 0.16751 variance: 7.5E-4
+    Right Asc: 258.8375 Dec: -26.6028
+    Mass: 0.85 Prop Mot Mag: 1.238
+
+   #78.  "(no common name)"  ----------
+    LHS Name: 486 CNS Name: GJ  783    A   
+    Apparent Mag: 5.32
+    Parallax Mean: 0.16533 variance: 9.0E-4
+    Right Asc: 302.7958 Dec: -36.1011
+    Mass: 0.82 Prop Mot Mag: 1.64
+
+   #79.  "82 Eridani"  ----------
+    LHS Name: 19 CNS Name: GJ  139        
+    Apparent Mag: 4.26
+    Parallax Mean: 0.16501 variance: 5.5E-4
+    Right Asc: 49.9792 Dec: -43.0697
+    Mass: 0.97 Prop Mot Mag: 3.124
+
+   #80.  "(no common name)"  ----------
+    LHS Name: 455 CNS Name: GJ 1221        
+    Apparent Mag: 14.12
+    Parallax Mean: 0.1647 variance: 0.0024
+    Right Asc: 267.025 Dec: 70.8747
+    Mass: 0.5 Prop Mot Mag: 1.651
+
+   #81.  "delta Pavonis"  ----------
+    LHS Name: 485 CNS Name: GJ  780        
+    Apparent Mag: 3.56
+    Parallax Mean: 0.16378 variance: 6.5E-4
+    Right Asc: 302.1792 Dec: -66.1819
+    Mass: 1.1 Prop Mot Mag: 1.656
+
+   #82.  "QY Aurigae A"  ----------
+    LHS Name: 226 CNS Name: GJ  268    A   
+    Apparent Mag: 12.05
+    Parallax Mean: 0.16293 variance: 0.00177
+    Right Asc: 107.5042 Dec: 38.5294
+    Mass: 0.17 Prop Mot Mag: 1.045
+
+   #83.  "HN Librae"  ----------
+    LHS Name: 2945 CNS Name: GJ  555        
+    Apparent Mag: 11.31
+    Parallax Mean: 0.16286 variance: 0.00261
+    Right Asc: 218.5667 Dec: -12.5194
+    Mass: 0.22 Prop Mot Mag: 0.694
+
+   #84.  "(no common name)"  ----------
+    LHS Name: 0 CNS Name: 2MA 0937+2931  
+    Apparent Mag: 0.0
+    Parallax Mean: 0.16284 variance: 0.00388
+    Right Asc: 144.3917 Dec: 29.5167
+    Mass: 0.0 Prop Mot Mag: 1.622
+
+   #85.  "(no common name)"  ----------
+    LHS Name: 260 CNS Name: GJ  338    A   
+    Apparent Mag: 7.62
+    Parallax Mean: 0.16213 variance: 0.00237
+    Right Asc: 138.5917 Dec: 52.6867
+    Mass: 0.6 Prop Mot Mag: 1.634
+
+   #86.  "(no common name)"  ----------
+    LHS Name: 3531 CNS Name: GJ  784        
+    Apparent Mag: 7.96
+    Parallax Mean: 0.16118 variance: 0.00107
+    Right Asc: 303.4708 Dec: -45.1639
+    Mass: 0.58 Prop Mot Mag: 0.794
+
+   #87.  "Wolf 562"  ----------
+    LHS Name: 394 CNS Name: GJ  581        
+    Apparent Mag: 10.56
+    Parallax Mean: 0.15929 variance: 0.0021
+    Right Asc: 229.8583 Dec: -7.7222
+    Mass: 0.3 Prop Mot Mag: 1.229
+
+   #88.  "EQ Pegasi"  ----------
+    LHS Name: 3965 CNS Name: GJ  896    A   
+    Apparent Mag: 10.26
+    Parallax Mean: 0.15772 variance: 0.00243
+    Right Asc: 352.9667 Dec: 19.9372
+    Mass: 0.34 Prop Mot Mag: 0.558
+
+   #89.  "Henry et al. 2006"  ----------
+    LHS Name: 2090 CNS Name: LHS 2090       
+    Apparent Mag: 16.1
+    Parallax Mean: 0.15687 variance: 0.00267
+    Right Asc: 135.0958 Dec: 21.8347
+    Mass: 0.09 Prop Mot Mag: 0.774
+
+   #90.  "Henry et al. 2006"  ----------
+    LHS Name: 337 CNS Name: LHS 337        
+    Apparent Mag: 12.75
+    Parallax Mean: 0.15678 variance: 0.00199
+    Right Asc: 189.7042 Dec: -38.3817
+    Mass: 0.15 Prop Mot Mag: 1.464
+
+   #91.  "(no common name)"  ----------
+    LHS Name: 433 CNS Name: GJ  661    A   
+    Apparent Mag: 9.93
+    Parallax Mean: 0.15632 variance: 0.00128
+    Right Asc: 258.0292 Dec: 45.6658
+    Mass: 0.39 Prop Mot Mag: 1.625
+
+   #92.  "(no common name)"  ----------
+    LHS Name: 3003 CNS Name: LHS 3003       
+    Apparent Mag: 17.05
+    Parallax Mean: 0.1563 variance: 0.003
+    Right Asc: 224.1583 Dec: -28.1642
+    Mass: 0.08 Prop Mot Mag: 0.965
+
+   #93.  "(no common name)"  ----------
+    LHS Name: 0 CNS Name: G 180-060      
+    Apparent Mag: 14.79
+    Parallax Mean: 0.156 variance: 0.004
+    Right Asc: 247.825 Dec: 40.865
+    Mass: 0.1 Prop Mot Mag: 0.358
+
+   #94.  "WD 0552-041"  ----------
+    LHS Name: 32 CNS Name: GJ  223.2      
+    Apparent Mag: 14.45
+    Parallax Mean: 0.155 variance: 0.0021
+    Right Asc: 88.7875 Dec: -4.1714
+    Mass: 0.5 Prop Mot Mag: 2.377
+
+   #95.  "Wolf 630 A"  ----------
+    LHS Name: 428 CNS Name: GJ  644    A   
+    Apparent Mag: 9.72
+    Parallax Mean: 0.15497 variance: 5.6E-4
+    Right Asc: 253.8667 Dec: -8.3364
+    Mass: 0.43 Prop Mot Mag: 1.208
+
+   #96.  "(no common name)"  ----------
+    LHS Name: 71 CNS Name: GJ  892        
+    Apparent Mag: 5.56
+    Parallax Mean: 0.15341 variance: 5.4E-4
+    Right Asc: 348.3208 Dec: 57.1683
+    Mass: 0.81 Prop Mot Mag: 2.095
+
+   #97.  "Jao et al. 2005"  ----------
+    LHS Name: 271 CNS Name: GJ 1128        
+    Apparent Mag: 12.74
+    Parallax Mean: 0.15305 variance: 0.00241
+    Right Asc: 145.6917 Dec: -68.885
+    Mass: 0.15 Prop Mot Mag: 1.121
+
+   #98.  "GL Virginis"  ----------
+    LHS Name: 324 CNS Name: GJ 1156        
+    Apparent Mag: 13.8
+    Parallax Mean: 0.1529 variance: 0.003
+    Right Asc: 184.75 Dec: 11.1253
+    Mass: 0.12 Prop Mot Mag: 1.301
+
+   #99.  "(no common name)"  ----------
+    LHS Name: 0 CNS Name: GJ  625        
+    Apparent Mag: 10.1
+    Parallax Mean: 0.15179 variance: 0.00101
+    Right Asc: 246.35 Dec: 54.3042
+    Mass: 0.37 Prop Mot Mag: 0.465
+
+   #100.  "Ross 104"  ----------
+    LHS Name: 0 CNS Name: GJ  408        
+    Apparent Mag: 10.02
+    Parallax Mean: 0.15016 variance: 0.00149
+    Right Asc: 165.0167 Dec: 22.8331
+    Mass: 0.39 Prop Mot Mag: 0.51
+
+ * -------------------------------------------
+ */

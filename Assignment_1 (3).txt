@@ -1,0 +1,30 @@
+
+public class Foothill {
+	public static void main(String[] args) {
+		System.out.println("Hello World!");
+		System.out.println("My name is Oscar Ramirez Lucero");
+		System.out.println("My student ID is 20249041");
+		System.out.println(
+				"In order to be successful in Computer Science 1A, you need to have both the desire to learn and a positive attitude. ");
+		System.out.println(
+				"The text called and Introduction to Java Programming is recommended but not required as important concepts will be covered in the modules.");
+		System.out.println(
+				"Eclipse will be the best compiler to use as the assistance forums will be limited to Eclipse.");
+		System.out.println(
+				"The ways you can loose points is if your code is not working, you edit your run, it is late, code something cool, or cheat.");
+		System.out.println(
+				"The ways to earn points is by taking enough time, write to specifications, making code readable, and asking a lot of questions.");
+	}
+}
+/*----------sample run--------------
+Hello World!
+My name is Oscar Ramirez Lucero
+My student ID is 20249041
+In order to be successful in Computer Science 1A, you need to have both the desire to learn and a positive attitude. 
+The text called and Introduction to Java Programming is recommended but not required as important concepts will be covered in the modules.
+Eclipse will be the best compiler to use as the assistance forums will be limited to Eclipse.
+The ways you can loose points is if your code is not working, you edit your run, it is late, code something cool, or cheat.
+The ways to earn points is by taking enough time, write to specifications, making code readable, and asking a lot of questions.
+
+
+------------------------------------*/

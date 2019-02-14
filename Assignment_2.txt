@@ -1,0 +1,263 @@
+// CIS 1C Assignment #2 
+// Instructor Solution Featuring clone()
+
+// client -----------------------------------------------------
+import cs_1c.*;
+import java.util.*;
+
+//------------------------------------------------------
+public class Foothill
+{
+   final static int MAT_SIZE = 100000;
+   // -------  main --------------
+   public static void main(String[] args) throws Exception
+   {
+      // 100000 x 100000 filled with 0
+      int k;
+      SparseMat<Double> mat 
+         = new SparseMat<Double>(MAT_SIZE, MAT_SIZE, 0.); 
+
+      // test mutators
+      for (k = 0; k < 10; k++)
+      {
+         mat.set(k, k, k*1.);
+         mat.set(4, k, k*10.);
+         mat.set(k, 4, -k*10.);
+      }
+      mat.showSubSquare(0, 12);
+      System.out.println();
+      
+      SparseMat<Double> mat2 = (SparseMat<Double>)mat;
+      
+      for (k = 0; k < 10; k++)
+      {
+         mat.set(k, k, 1.);
+         mat.set(4, k, 10.);
+         mat.set(k, 4, -10.);
+      }
+      
+      mat.showSubSquare(0, 12);
+      System.out.println();
+      mat2.showSubSquare(0, 12);
+   }
+}
+   
+//SparseMat constructor
+class SparseMat<E> implements Cloneable
+{
+   protected int numRows;
+   protected int numCols;
+   protected E defaultVal;
+   protected FHarrayList<FHlinkedList<MatNode>> rows;
+   
+
+   /*
+    * A constructor that establishes a size (row size and column size both > 1)
+    * as well as a default value for all elements.
+    */
+   public SparseMat(int row, int column, E defaultValue)
+   {
+      numRows = row;
+      numCols = column;
+      defaultVal = defaultValue;
+      allocateEmptyMatrix();
+   }
+   
+   /*
+    * allocate all the memory of an empty matrix
+    */
+   private void allocateEmptyMatrix()
+   {
+      this.rows = new FHarrayList<FHlinkedList<MatNode>>(this.numRows);
+      
+      for(int i = 0; i < this.numRows; i++)
+      {
+         this.rows.add(new FHlinkedList<MatNode>());
+      }
+   }
+
+   /*
+    * An accessor that returns the object stored in row r and column c.  It 
+    * throws an IndexOutOfBoundsException  if matrix bounds (row and/or column
+    *) are violated.
+    */
+   public E get(int r, int c) throws IndexOutOfBoundsException
+   {
+      if(r > this.numRows || c > this.numCols)
+      {
+         throw new IndexOutOfBoundsException();
+      }
+      
+      ListIterator<MatNode> iter = this.rows.get(r).listIterator();
+      MatNode potential;
+      
+      while (iter.hasNext())
+      {
+         potential = iter.next();
+         if(potential.getCol() == c)
+         {
+            return potential.data;
+         }
+      }
+      return this.defaultVal;
+      
+   }
+   
+   /*
+    * A mutator that places x in row r and column c.   It returns false without
+    *  an exception if bounds are violated.  Also, if x is the default value it
+    *   will remove any existing node (the internal data type used by SparseMat
+    *   ) from the data structure, since there is never a need to store the 
+    *   default value explicitly.  Of course, if there is no node present in 
+    *   the internal data representation, set() will add one if x is not 
+    *   default and store x in it.
+    */
+   public boolean set(int r, int c, E x)
+   {
+      if(r >= this.numRows || c >= this.numCols)
+      {
+         return false;
+      }
+      
+      boolean isDefault = x.equals(defaultVal);
+      int higher;
+      MatNode potential = new MatNode(c, x);
+      MatNode nextNode;
+      ListIterator<MatNode> iter = rows.get(r).listIterator();
+      
+      while(iter.hasNext())
+      {
+         nextNode = iter.next();
+         higher = potential.comparePosition(nextNode);
+         
+         if(higher == 0)
+         {
+            if(isDefault)
+            {
+               iter.remove();
+               return true;
+            }
+            iter.set(potential);
+            return true;
+         }
+         if(higher < 0)
+         {
+            iter.previous();
+            break;
+         }
+      }
+      if(!isDefault){
+         iter.add(potential);
+      }
+      return true;
+   }
+   
+   /*
+    * clears all the rows, effectively setting all values to the defaultVal
+    * (but leaves the matrix size unchanged).
+    */
+   public void clear()
+   {
+      this.allocateEmptyMatrix();
+   }
+   
+   /*
+    *  display method that will show a square sub-matrix anchored at (start, 
+    *  start) and whose size is size x size.  In other words it will show the
+    *   rows from start to start + size -1 and the columns from start to start
+    *    + size - 1.  This is mostly for debugging purposes since we obviously
+    *     cannot see the entire matrix at once.
+    */
+   public void showSubSquare(int start, int size)
+   {
+      int mSize = start + size;
+      
+      System.out.println("");
+      for(int r = start; r < mSize; r++)
+      {
+         for(int c = start; c < mSize; c++)
+         {
+            System.out.format("%4.1f ", get(r, c));
+         }
+         System.out.println("");
+      }
+   }
+   
+// protected enables us to safely make col/data public
+   protected class MatNode implements Cloneable
+   {
+      public int col;
+      public E data;
+      
+      // we need a default constructor for lists
+      MatNode()
+      {
+         col = 0;
+         data = null;
+      }
+
+      MatNode(int cl, E dt)
+      {
+         col = cl;
+         data = dt;
+      }
+      
+      public int getCol(){
+         return col;
+      }
+      
+      public int comparePosition(MatNode node){
+         return this.col - node.getCol();
+      }
+      public Object clone() throws CloneNotSupportedException
+      {
+         // shallow copy
+         MatNode newObject = (MatNode)super.clone();
+         return (Object) newObject;
+      }
+   }
+}
+/*----------TEST RUN-------------
+
+0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0 
+0.0  1.0  0.0  0.0 -10.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0 
+0.0  0.0  2.0  0.0 -20.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0 
+0.0  0.0  0.0  3.0 -30.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0 
+0.0 10.0 20.0 30.0 -40.0 50.0 60.0 70.0 80.0 90.0  0.0  0.0 
+0.0  0.0  0.0  0.0 -50.0  5.0  0.0  0.0  0.0  0.0  0.0  0.0 
+0.0  0.0  0.0  0.0 -60.0  0.0  6.0  0.0  0.0  0.0  0.0  0.0 
+0.0  0.0  0.0  0.0 -70.0  0.0  0.0  7.0  0.0  0.0  0.0  0.0 
+0.0  0.0  0.0  0.0 -80.0  0.0  0.0  0.0  8.0  0.0  0.0  0.0 
+0.0  0.0  0.0  0.0 -90.0  0.0  0.0  0.0  0.0  9.0  0.0  0.0 
+0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0 
+0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0 
+
+
+1.0  0.0  0.0  0.0 -10.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0 
+0.0  1.0  0.0  0.0 -10.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0 
+0.0  0.0  1.0  0.0 -10.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0 
+0.0  0.0  0.0  1.0 -10.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0 
+10.0 10.0 10.0 10.0 -10.0 10.0 10.0 10.0 10.0 10.0  0.0  0.0 
+0.0  0.0  0.0  0.0 -10.0  1.0  0.0  0.0  0.0  0.0  0.0  0.0 
+0.0  0.0  0.0  0.0 -10.0  0.0  1.0  0.0  0.0  0.0  0.0  0.0 
+0.0  0.0  0.0  0.0 -10.0  0.0  0.0  1.0  0.0  0.0  0.0  0.0 
+0.0  0.0  0.0  0.0 -10.0  0.0  0.0  0.0  1.0  0.0  0.0  0.0 
+0.0  0.0  0.0  0.0 -10.0  0.0  0.0  0.0  0.0  1.0  0.0  0.0 
+0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0 
+0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0 
+
+
+1.0  0.0  0.0  0.0 -10.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0 
+0.0  1.0  0.0  0.0 -10.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0 
+0.0  0.0  1.0  0.0 -10.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0 
+0.0  0.0  0.0  1.0 -10.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0 
+10.0 10.0 10.0 10.0 -10.0 10.0 10.0 10.0 10.0 10.0  0.0  0.0 
+0.0  0.0  0.0  0.0 -10.0  1.0  0.0  0.0  0.0  0.0  0.0  0.0 
+0.0  0.0  0.0  0.0 -10.0  0.0  1.0  0.0  0.0  0.0  0.0  0.0 
+0.0  0.0  0.0  0.0 -10.0  0.0  0.0  1.0  0.0  0.0  0.0  0.0 
+0.0  0.0  0.0  0.0 -10.0  0.0  0.0  0.0  1.0  0.0  0.0  0.0 
+0.0  0.0  0.0  0.0 -10.0  0.0  0.0  0.0  0.0  1.0  0.0  0.0 
+0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0 
+0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0  0.0 
+
+--------------END RUN _-------*/

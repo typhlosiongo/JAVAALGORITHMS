@@ -1,0 +1,57 @@
+/*
+ * Source Program for Assignment #2 for CS 1A
+ * Written by Oscar Ramirez, 4/18/16
+ */
+public class Math {
+	public static void main(String[] args) {
+		/*
+		 * will hold the Student ID number, the number of characters from string
+		 * name, answers to the expressions
+		 */
+		int myId, numLet, intResult;
+		double doubleResult;
+		String name; // will hold my name.
+
+		myId = 20249041; // sets myId to the student number
+		name = new String("Oscar"); // sets name to an actual name
+		numLet = name.length(); // sets numLet to the character length of name
+
+		// introduction:
+		System.out.println("My first name is " + name + ".");
+		System.out.println("My Student ID is " + myId + ".");
+		System.out.println("The number of characters in my first name is " + numLet + ".");
+
+		// first expression:
+		intResult = (myId % 17);
+		System.out.println("Expression #1 --> " + intResult);
+
+		// second expression:
+		intResult = (numLet + 17) % 11;
+		System.out.println("Expression #2 --> " + intResult);
+
+		// third expression:
+		doubleResult = (myId / (numLet + 800.));
+		System.out.println("Expression #3 --> " + doubleResult);
+
+		// fourth expression:
+		intResult = (1 + 2 + 3 + 4 + numLet);
+		System.out.println("Expression #4 --> " + intResult);
+
+		// fifth expression:
+		doubleResult = (15000 / (80. + ((myId - 123456.) / ((numLet + 20.) * (numLet + 20.)))));
+		System.out.println("Expression #5 --> " + doubleResult);
+
+	}
+
+}
+/*--------------------------------Run--------------------------------
+My first name is Oscar.
+My Student ID is 20249041.
+The number of characters in my first name is 5.
+Expression #1 --> 1
+Expression #2 --> 0
+Expression #3 --> 25154.088198757763
+Expression #4 --> 15
+Expression #5 --> 0.46467054115159484
+
+--------------------------------End Run--------------------------------*/

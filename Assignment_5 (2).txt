@@ -1,0 +1,145 @@
+
+import java.util.Scanner;
+
+public class Foothill {
+   //// class variables shared by more than one method
+   static Scanner input;
+   static String key;
+   static String target;
+   // final constants
+   final static int MIN_VAL = 4;
+   final static int MAX_VAL = 500;
+
+   // main method
+   public static void main(String[] args) {
+      // shared Scanner reference for all methods in main Foothill class
+      input = new Scanner(System.in);
+
+      getKeyCharacter();
+      getString();
+      maskCharacter(target, key);
+      removeCharacter(target, key);
+      countKey(target, key);
+   }
+
+   // asks for they key character
+   private static String getKeyCharacter() {
+
+      do {
+         System.out.print("Please enter a SINGLE character " + 
+      "to act as a key: ");
+         key = input.nextLine();
+      } while (key.length() != 1);
+
+      return key;
+   }
+
+   // asks for the phrase that we will be working with
+   private static String getString() {
+
+      do {
+         System.out.println("Please enter a phrase or sentence >= " + 
+      MIN_VAL + " and <= " + MAX_VAL + " characters:");
+         target = input.nextLine();
+      } while (target.length() <= MIN_VAL-1 || target.length() >= MAX_VAL-1);
+
+      return target;
+
+   }
+
+   // converts key character to '$'
+   private static String maskCharacter(String target, String key) {
+      System.out.println("\nString with '" + key + "' masked:");
+      target = target.replace(key, "$");
+      System.out.println(target);
+
+      return target;
+   }
+
+   // removes key character from the phrase
+   private static String removeCharacter(String target, String key) {
+      System.out.println("\nString with '" + key + "' removed:");
+      target = target.replace(key, "");
+      System.out.println(target);
+
+      return target;
+   }
+
+   // counts how many times the key character occurs in target string
+   private static int countKey(String target, String key) {
+      char k = key.charAt(0);
+      int count = 0;
+      for (int i = 0; i < target.length(); i++) {
+         if (target.charAt(i) == k) {
+            count++;
+         }
+      }
+      System.out.println("\n# of " + key + "s: " + count);
+      return count;
+   }
+
+}
+/*---------------------RUN 1-----------------------
+Please enter a SINGLE character to act as a key: dgkfpo
+Please enter a SINGLE character to act as a key: O*(U
+Please enter a SINGLE character to act as a key: P
+Please enter a phrase or sentence >= 4 and <= 500 characters:
+sdf
+Please enter a phrase or sentence >= 4 and <= 500 characters:
+sfd sf jko POIJ  JKOLP  lkjsdf psadfjP sdfj erP sdfp
+
+String with 'P' masked:
+sfd sf jko $OIJ  JKOL$  lkjsdf psadfj$ sdfj er$ sdfp
+
+String with 'P' removed:
+sfd sf jko OIJ  JKOL  lkjsdf psadfj sdfj er sdfp
+
+# of Ps: 4 
+---------------------RUN 2-----------------------
+Please enter a SINGLE character to act as a key: we
+Please enter a SINGLE character to act as a key: s
+Please enter a phrase or sentence >= 4 and <= 500 characters:
+h
+Please enter a phrase or sentence >= 4 and <= 500 characters:
+Mississippi River
+
+String with 's' masked:
+Mi$$i$$ippi River
+
+String with 's' removed:
+Miiippi River
+
+# of ss: 4
+---------------------RUN 3-----------------------
+Please enter a SINGLE character to act as a key: hufe
+Please enter a SINGLE character to act as a key: 3ef
+Please enter a SINGLE character to act as a key: w
+Please enter a phrase or sentence >= 4 and <= 500 characters:
+The wicked witch of the west went her own way.
+
+String with 'w' masked:
+The $icked $itch of the $est $ent her o$n $ay.
+
+String with 'w' removed:
+The icked itch of the est ent her on ay.
+
+# of ws: 6
+---------------------RUN 4-----------------------
+Please enter a SINGLE character to act as a key: asd
+Please enter a SINGLE character to act as a key: a
+Please enter a phrase or sentence >= 4 and <= 500 characters:
+asd
+Please enter a phrase or sentence >= 4 and <= 500 characters:
+Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibun
+Please enter a phrase or sentence >= 4 and <= 500 characters:
+Sed ut perspiciatis unde omnis iste natus error sit voluptatem 
+
+String with 'a' masked:
+Sed ut perspici$tis unde omnis iste n$tus error sit volupt$tem 
+
+String with 'a' removed:
+Sed ut perspicitis unde omnis iste ntus error sit volupttem 
+
+# of as: 3
+---------------------END RUN-----------------------
+*/
